@@ -1,0 +1,25 @@
+{
+    "name": "datetime-range-picker",
+    "version": "1.0.0",
+    "description": "look @github for more info",
+    "main": "Gruntfile.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Flekay/"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Flekay/"
+    },
+    "homepage": "https://github.com/Flekay/",
+    "devDependencies": {
+        "eslint": "^8.52.0",
+        "eslint-config-google": "^0.14.0",
+        "grunt": "^1.5.3",
+        "grunt-cli": "^1.4.3",
+        "grunt-contrib-less": "^3.0.0",
+        "grunt-contrib-uglify": "^5.2.2",
+        "grunt-contrib-watch": "^1.1.0"
+    }
+}

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overview</title>
+    <link rel="stylesheet" href="/app/main.css">
+    <link rel="stylesheet" href="/src/style/vanilla-datetimerange-picker.css">
+
+    <script src="https://schopify.casepayt.com/app/main.min.js" async defer></script>
+    <script src="https://schopify.casepayt.com/app/moment.min.js" async defer></script>
+    <script src="https://schopify.casepayt.com/app/vanilla-datetimerange-picker.js" async defer></script>
+</head>
+<body>
+    <main id="main-content">
+
+        <div class="container-fluid" id="keys">
+            <div class="container-md row">
+                <div class="row col-12 between">
+                    <div class="col-auto">
+                        <h1>Dashboard</h1>
+                    </div>
+                    <div class="col-auto center">
+                        <button class="btn btn-primary" id="datetimerange-input1">Change Date</button>
+                        <!-- <input type="text" id="datetimerange-input1"> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="container-md row">
+                <div class="col-12">
+                    <canvas id="myChart2" class="table-container"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            window.addEventListener("load", function (event) {
+                new DateRangePicker('datetimerange-input1',
+                    {
+                        // timePicker: true,
+                        // alwaysShowCalendars: true,
+                        // showCustomRangeLabel: false,
+                        autoApply: false,
+                        opens: 'left',
+                        // drops: 'auto',
+                        ranges: {
+                            'Today': [moment().startOf('day'), moment().endOf('day')],
+                            'Yesterday': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                            'Last 7 Days': [moment().subtract(7, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                            'Last 30 Days': [moment().subtract(30, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+                            'This Month': [moment().startOf('month').startOf('day'), moment().endOf('month').endOf('day')],
+                            'This year': [moment().startOf('year').startOf('day'), moment().endOf('year').endOf('day')],
+                            'Last month': [moment().subtract(1, 'month').startOf('month').startOf('day'), moment().subtract(1, 'month').endOf('month').endOf('day')],
+                            'Last year': [moment().subtract(1, 'year').startOf('year').startOf('day'), moment().subtract(1, 'year').endOf('year').endOf('day')],
+                        },
+                        locale: {
+                            format: "DD MMM, Y",
+                            firstDay: 1,
+                        },
+                        startDate: moment().subtract(7, 'days').startOf('day'),
+                        endDate: moment().subtract(1, 'days').endOf('day'),
+                    },
+                    function (start, end) {
+                        let startDate = moment(start);
+                        let endDate = moment(end);
+
+                        let currentDate = startDate;
+                        $chart["myChart2"].data.labels = [];
+                        $chart["myChart2"].data.datasets[0].data = [];
+                        while (currentDate <= endDate) {
+                            $chart["myChart2"].data.labels.push(currentDate.format("YYYY-MM-DD"));
+                            $chart["myChart2"].data.datasets[0].data.push(Math.floor(50 + Math.random() * 5));
+                            currentDate.add(1, 'day');
+                        }
+
+                        Object.keys($chart).forEach(chartName => {
+                            if ($chart[chartName].data.labels.length > 1){
+                                $chart[chartName].options.scales.x.offset = false;
+                            }else{
+                                $chart[chartName].options.scales.x.offset = true;
+                            }
+                            $chart[chartName].update();
+                        });
+                    })
+            });
+        </script>
+        
+        <script src="https://schopify.casepayt.com/app/chart.min.js"></script>
+        <script>
+            let changeAlpha = function(color, alpha) {
+                let parts = color.split(",");
+                parts[3] = alpha + ")";
+                return parts.join(",");
+            }
+            var $chart = [];
+            let $options = {
+                layout: {
+                    padding: {
+                        top: 30,
+                        left: 14,
+                        right: 32,
+                        bottom: 12,
+                    },
+                },
+                plugins: {
+                    tooltip: {
+                        // backgroundColor: '#fff',
+                        // displayColors: false,
+                        // titleFontColor: '#000',
+                        // bodyFontColor: '#000',
+                        // enabled: true,
+                        // usePointStyle: true,
+                    },
+                    tooltip: {
+                        usePointStyle: true,
+                        multiKeyBackground: '#0000',
+                        callbacks: {
+                            labelPointStyle: (context) => {
+                                return {
+                                    pointStyle: 'rectRounded',
+                                };
+                            },
+                            labelColor: function(context) {
+                                return {
+                                    borderColor: context.dataset.borderColor,
+                                    backgroundColor: changeAlpha(context.dataset.borderColor, 0.5),
+                                    borderWidth: 1,
+                                    borderRadius: 3,
+                                }
+                            },
+                        },
+                    },
+                    legend: {
+                        // display: false,
+                        position: 'bottom',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'rectRounded',
+                        },
+                    },
+                },
+                animation: {
+                    duration: 0,
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        // offset: true,
+                        border: {
+                            display: false,
+                        },
+                        grid: {
+                            display: false,
+                        },
+                        ticks: {
+                            maxTicksLimit: 7,
+                            padding: 10,
+                        },
+                    },
+                    y: {
+                        border: {
+                            display: false,
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            maxTicksLimit: 5,
+                            padding: 10,
+                        },
+                    },
+                }
+            };
+        {
+            let chartName = "myChart2";
+            let ctx = document.getElementById('myChart2').getContext('2d');
+            // let lineColor = "rgba(149, 76, 233, 1)";
+            let lineColor = "rgba(110, 206, 157, 1)";
+
+            let bgPositive = ctx.createLinearGradient(0, 0, 0, 250);
+            bgPositive.addColorStop(0, "rgba(110, 206, 157, 0.5)");
+            bgPositive.addColorStop(0.35, "rgba(110, 206, 157, 0.25)");
+            bgPositive.addColorStop(1, "rgba(110, 206, 157,0)");
+
+            let bgNegative = ctx.createLinearGradient(0, 300, 0, 100);
+            bgNegative.addColorStop(0, "rgba(244,94,132,0.5)");
+            bgNegative.addColorStop(0.35, "rgba(244,94,132,0.25)");
+            bgNegative.addColorStop(1, "rgba(244,94,132,0)");
+
+            $chart[chartName] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: null,
+                    datasets: [
+                        {
+                            data: null,
+                            label: "Income",
+                            cubicInterpolationMode: 'monotone',
+                            // backgroundColor: lineColor,
+                            borderColor: lineColor,
+                            pointBorderColor: "rgba(255,255,255,0)",
+                            pointBackgroundColor: lineColor,
+                            pointBorderWidth: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: lineColor,
+                            pointHoverBorderWidth: 0,
+                            pointRadius: 1,
+                            borderWidth: 2,
+                            fill: {
+                                target: 'origin',
+                                above: bgPositive,
+                                below: bgNegative,
+                            },
+                        },
+                    ]
+                },
+                options: $options,
+            });
+        }
+        </script>
+    </main>
+
+
+</body>
+</html>
